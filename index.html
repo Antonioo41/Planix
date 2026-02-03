@@ -1,0 +1,159 @@
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tripio.net - Planificador Inteligente de Viajes</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Lato&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Lato',sans-serif}
+body{background:#f9f9f9;color:#333}
+
+:root{
+--azul:#00B2A9;
+--naranja:#FFA56B;
+--gris:#f2f2f2;
+}
+
+/* HERO */
+header{
+background:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?fit=crop&w=1400&q=80') center/cover;
+height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+text-align:center;color:white;position:relative;
+}
+header::after{content:'';position:absolute;width:100%;height:100%;background:rgba(0,0,0,0.55)}
+header *{z-index:1}
+header img{width:180px;margin-bottom:20px}
+
+/* FORM INICIAL */
+.buscador{
+background:white;padding:40px;border-radius:12px;margin-top:20px;
+display:flex;flex-wrap:wrap;gap:15px;justify-content:center
+}
+.buscador input, .buscador button{
+padding:12px;border-radius:6px;border:1px solid #ccc;font-size:1rem
+}
+.buscador button{background:var(--naranja);color:white;border:none;font-weight:bold;cursor:pointer}
+
+/* SECCIONES */
+section{padding:60px 20px}
+h2{color:var(--azul);text-align:center;margin-bottom:30px}
+
+/* VUELOS */
+.filtros{display:flex;flex-wrap:wrap;gap:15px;justify-content:center;margin-bottom:30px}
+.filtros select,.filtros input{padding:10px;border-radius:6px;border:1px solid #ccc}
+.vuelos-grid{display:grid;gap:15px;max-width:900px;margin:auto}
+.vuelo{
+background:white;padding:15px;border-radius:10px;
+display:flex;justify-content:space-between;align-items:center;
+box-shadow:0 3px 8px rgba(0,0,0,0.1)
+}
+.vuelo button{background:var(--azul);color:white;border:none;padding:8px 15px;border-radius:6px}
+
+/* ITINERARIO */
+.chat{
+max-width:800px;margin:auto;background:white;padding:20px;border-radius:10px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1)
+}
+.mensaje-ia{background:var(--gris);padding:12px;border-radius:8px;margin-bottom:10px}
+.hotel-link{display:block;margin-top:5px;color:var(--azul);font-weight:bold}
+
+/* MAPA */
+#mapa{height:400px;margin-top:40px;border-radius:10px}
+
+footer{background:var(--azul);color:white;text-align:center;padding:20px}
+</style>
+</head>
+<body>
+
+<header>
+<img src="logo.png" alt="Tripio Logo">
+<h1>Tu viaje perfecto, diseñado por IA</h1>
+<p>Planifica todo en un solo lugar, sin saltar entre mil webs</p>
+
+<div class="buscador">
+<input type="text" id="origen" placeholder="Desde (aeropuerto o ciudad)">
+<input type="text" id="destino" placeholder="Destino">
+<input type="date" id="ida">
+<input type="date" id="vuelta">
+<input type="number" id="personas" placeholder="Personas" min="1">
+<button onclick="buscarVuelos()">Buscar vuelos</button>
+</div>
+</header>
+
+<!-- VUELOS -->
+<section id="seccionVuelos" style="display:none">
+<h2>Elige tus vuelos</h2>
+
+<div class="filtros">
+<select><option>Ordenar por relevancia</option><option>Más barato</option><option>Más rápido</option></select>
+<select><option>Escalas</option><option>Directo</option><option>1 escala</option><option>2+ escalas</option></select>
+<select><option>Equipaje</option><option>Solo mochila</option><option>Maleta facturada</option></select>
+<input type="time"> <span>a</span> <input type="time">
+</div>
+
+<div class="vuelos-grid" id="listaVuelos"></div>
+</section>
+
+<!-- ITINERARIO IA -->
+<section id="seccionItinerario" style="display:none">
+<h2>Tu itinerario inteligente</h2>
+<div class="chat" id="chatItinerario"></div>
+<div id="mapa"></div>
+</section>
+
+<footer>© 2026 Tripio.net</footer>
+
+<script>
+function buscarVuelos(){
+document.getElementById("seccionVuelos").style.display="block";
+
+let vuelosHTML="";
+for(let i=1;i<=3;i++){
+vuelosHTML+=`
+<div class="vuelo">
+<div>
+<strong>Vuelo recomendado ${i}</strong><br>
+Madrid → Roma · 2h 30m
+</div>
+<button onclick="generarItinerario()">Seleccionar</button>
+</div>`;
+}
+document.getElementById("listaVuelos").innerHTML=vuelosHTML;
+}
+
+function generarItinerario(){
+document.getElementById("seccionItinerario").style.display="block";
+
+let destino=document.getElementById("destino").value;
+let ida=document.getElementById("ida").value;
+let vuelta=document.getElementById("vuelta").value;
+let personas=document.getElementById("personas").value;
+
+let bookingLink=`https://www.booking.com/searchresults.html?ss=${destino}&checkin=${ida}&checkout=${vuelta}&group_adults=${personas}`;
+
+document.getElementById("chatItinerario").innerHTML=`
+<div class="mensaje-ia">
+✈️ Perfecto, tu viaje a <strong>${destino}</strong> está en marcha.<br><br>
+🏛 Día 1: Centro histórico y paseo principal<br>
+🍝 Día 2: Zonas locales y gastronomía<br>
+🌅 Día 3: Excursión cercana recomendada<br><br>
+
+🏨 Hoteles recomendados en ${destino}:  
+<a class="hotel-link" href="${bookingLink}" target="_blank">Ver opciones en Booking</a>
+</div>
+`;
+
+cargarMapa(destino);
+}
+
+function cargarMapa(ciudad){
+document.getElementById("mapa").innerHTML=`<iframe
+width="100%" height="100%" frameborder="0" style="border:0"
+src="https://www.google.com/maps?q=${ciudad}&output=embed" allowfullscreen>
+</iframe>`;
+}
+</script>
+
+</body>
+</html>
