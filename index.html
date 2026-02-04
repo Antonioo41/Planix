@@ -121,6 +121,53 @@ color:white;
 border-radius:5px;
 cursor:pointer;
 }
+/* ===== RESPONSIVE MOVIL ===== */
+@media (max-width: 768px){
+
+header{
+height:auto;
+padding:40px 15px;
+}
+
+.buscador{
+flex-direction:column;
+padding:25px;
+width:95%;
+}
+
+.buscador input,
+.boton{
+width:100%;
+}
+
+.sugerencias{
+width:100%;
+}
+
+.vuelos, .chat{
+width:95%;
+padding:15px;
+}
+
+#mapa{
+height:250px;
+}
+
+h1{
+font-size:1.8rem;
+}
+
+p{
+font-size:0.95rem;
+}
+
+}
+@media (orientation: landscape) and (max-height: 500px){
+header{
+height:auto;
+padding:30px;
+}
+}
 </style>
 </head>
 
@@ -326,6 +373,7 @@ document.getElementById("cookieBanner").style.display="block";
 
 </body>
 </html>
+
 
 
 
