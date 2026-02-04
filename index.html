@@ -315,6 +315,25 @@ ${respuesta.replace(/\n/g,"<br>")}
 
 <div class="acciones-viaje">
 <a class="boton" href="https://ektatraveling.tpx.lu/OWr2j3Hi" target="_blank">🚗 Alquilar coche</a>
+<div class="acciones-viaje" id="ajustesViaje">
+  <p style="margin-top:15px;font-weight:bold">¿Quieres cambiar tu viaje?</p>
+
+  <button class="boton" onclick="ajustarItinerario('add_place')">➕ Añadir un sitio concreto</button>
+  <button class="boton" onclick="ajustarItinerario('relajado')">🔄 Hacerlo más relajado</button>
+  <button class="boton" onclick="ajustarItinerario('intenso')">⚡ Hacerlo más intenso</button>
+  <button class="boton" onclick="ajustarItinerario('cultura')">🏛️ Más cultura</button>
+  <button class="boton" onclick="ajustarItinerario('naturaleza')">🌿 Más naturaleza</button>
+  <button class="boton" onclick="ajustarItinerario('gastronomia')">🍽️ Más gastronomía</button>
+
+  <p id="limiteAjustes" style="display:none;margin-top:10px;color:#888">
+    Más ajustes estarán disponibles próximamente 🙂
+  </p>
+</div>
+
+<div class="acciones-viaje" style="margin-top:20px">
+  <button class="boton" disabled>💾 Guarda tu itinerario o desbloquea más ajustes (próximamente)</button>
+</div>
+
 </div>
 
 </div>
@@ -325,7 +344,7 @@ cargarMapa(destino);
 
 /* SUPABASE */
 
-async function pedirItinerario(destino,ida,vuelta,personas){
+async function pedirItinerario(destino, ida, vuelta, personas, ajuste = "") {
 try{
 const r=await fetch("https://pyvbiouteylvmhxkwnri.supabase.co/functions/v1/mistral",{
 method:"POST",
@@ -333,7 +352,7 @@ headers:{
 "Content-Type":"application/json",
 "Authorization":"Bearer sb_publishable_bV8dOCIi5X4uVEUGzCXb9Q_LA3HjZr5"
 },
-body:JSON.stringify({destino,ida,vuelta,personas})
+body: JSON.stringify({destino, ida, vuelta, personas, ajuste})
 });
 const d=await r.json();
 return d.respuesta || "Itinerario listo.";
@@ -369,15 +388,39 @@ document.getElementById("cookieBanner").style.display="block";
 }
 }
 
+let ajustesUsados = 0;
+let ultimoItinerario = "";
+
+async function ajustarItinerario(tipo) {
+  if (ajustesUsados >= 2) {
+    document.getElementById("limiteAjustes").style.display = "block";
+    return;
+  }
+
+  ajustesUsados++;
+  document.getElementById("chatItinerario").innerHTML = "Ajustando tu viaje...";
+
+  let destino = document.getElementById("destino").value;
+  let ida = document.getElementById("ida").value;
+  let vuelta = document.getElementById("vuelta").value;
+  let personas = document.getElementById("personas").value;
+
+  let respuesta = await pedirItinerario(destino, ida, vuelta, personas, tipo);
+
+  ultimoItinerario = respuesta;
+
+  document.getElementById("chatItinerario").innerHTML = `
+    <div class="mensaje-ia">
+      ${respuesta.replace(/\n/g,"<br>")}
+    </div>
+  `;
+
+  if (ajustesUsados >= 2) {
+    document.getElementById("limiteAjustes").style.display = "block";
+  }
+}
+
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
